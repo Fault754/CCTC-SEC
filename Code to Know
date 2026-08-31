@@ -1,1 +1,44 @@
+RECON NOTES:
 
+1. Create the initial multiplex socket
+ssh -SM /tmp/jump <user>@<jump ip>
+
+2. Build proxychains to allow for host enumeration
+ssh -S /tmp/jump jump -O forward -D9050
+
+3. Perform ping sweep to discover target hosts
+for i in {1..254} ;do (ping -c 1 <target range>.$1 | grep "bytes from &) 2>/dev/ull ;done
+
+4. Perform host enumeration against discovered target hosts
+proxychains nmap -T5 -Pn -sV -n <target host>
+proxychains nmap -T5 -Pn -n <target host> -p
+.42 > 22,80
+.61 > 22,80,2289
+.200 > 22
+proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
+
+.42
+/robost.txt
+/java/
+/path/
+/uploads/
+/chat
+/cmdinjections
+/webexample
+/cross/XXSdemo.php
+
+.61
+/login.php
+
+5. Build out port forward
+ssh -S /tmp/jump jump -O forward -D9050 -L1234:10.208.50.42:22 -L1235:10.208.50.42:80 -L1236:10.208.50.61:22 -L1237:10.208.50.61:80 -L1238:10.208.50.61:3389 -L1239:10.208.50.200:22
+
+6. Access the local ports
+firefox (web servers)>        127.0.0.1:<local port>
+lin-ops (ssh connection)>     ssh <user>@localhost -p <local port>
+
+7.Pivot into T1
+ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
+-O cancel -D9050 (cancel jump proxychains)
+
+8. Tepeat and Go DEEPER!!!
