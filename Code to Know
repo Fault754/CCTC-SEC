@@ -1,17 +1,17 @@
 RECON NOTES:
 
 1. Create the initial multiplex socket
-ssh -SM /tmp/jump <user>@<jump ip>
+lin-ops$ ssh -MS /tmp/jump <user>@<jump ip>
 
 2. Build proxychains to allow for host enumeration
-ssh -S /tmp/jump jump -O forward -D9050
+lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
 
 3. Perform ping sweep to discover target hosts
-for i in {1..254} ;do (ping -c 1 <target range>.$1 | grep "bytes from &) 2>/dev/ull ;done
+jump$ for i in {1..254} ;do (ping -c 1 <target range>.$1 | grep "bytes from" &) 2>/dev/null ;done
 
 4. Perform host enumeration against discovered target hosts
-proxychains nmap -T5 -Pn -sV -n <target host>
-proxychains nmap -T5 -Pn -n <target host> -p
+lin-ops$ proxychains nmap -T5 -Pn -sV -n <target host>
+lin-ops$ proxychains nmap -T5 -Pn -n <target host> -p
 .42 > 22,80
 .61 > 22,80,2289
 .200 > 22
@@ -31,15 +31,37 @@ proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
 /login.php
 
 5. Build out port forward
-ssh -S /tmp/jump jump -O forward -D9050 -L1234:10.208.50.42:22 -L1235:10.208.50.42:80 -L1236:10.208.50.61:22 -L1237:10.208.50.61:80 -L1238:10.208.50.61:3389 -L1239:10.208.50.200:22
+lin-ops$ ssh -S /tmp/jump jump -O forward -D9050 -L1234:10.208.50.42:22 -L1235:10.208.50.42:80 -L1236:10.208.50.61:22 -L1237:10.208.50.61:80 -L1238:10.208.50.61:3389 -L1239:10.208.50.200:22
 
 6. Access the local ports
 firefox (web servers)>        127.0.0.1:<local port>
 lin-ops (ssh connection)>     ssh <user>@localhost -p <local port>
 
 7.Pivot into T1
-ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
+lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
 -O cancel -D9050 (cancel jump proxychains)
 
 8. Tepeat and Go DEEPER!!!
+
+
+
+
+
+ssh -S /tmp/jump jump -O forward -D9050 -L41100:192.168.28.100:80 -L41101:192.168.28.100:2222 -L41102:192.168.28.105:2222 -L41103:192.168.28.111:80 -L41104:192.168.28.111:2222
+-L 41105:192.168.28.111:8080 -L41106:192.168.28.120:4242 -L41107:192.168.150.245:3389 -L41108:192.168.150.253:80
+
+28.100
+/admin/
+/admin/login.php
+/img/
+
+28.111
+80
+/css/
+/images/
+/sites/
+8080
+/css/
+/images/
+/js/
 
