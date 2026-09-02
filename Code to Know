@@ -1,3 +1,19 @@
+
+
+SELECT DISTINCT building_name
+FROM buildings 
+  LEFT JOIN employees
+    ON building_name = building
+WHERE role IS NULL;
+
+
+SELECT title, (domestic_sales + international_sales) / 1000000 AS gross_sales_millions
+FROM movies
+  JOIN boxoffice
+    ON movies.id = boxoffice.movie_id;
+
+
+
 RECON NOTES:
 
 1. Create the initial multiplex socket
