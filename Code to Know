@@ -32,7 +32,7 @@ lin-ops$ proxychains nmap -T5 -Pn -n <target host> -p
 proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
 
 .42
-/robost.txt
+/robots.txt
 /java/
 /path/
 /uploads/
