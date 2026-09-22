@@ -19,6 +19,7 @@ lin-ops$ ssh -MS /tmp/jump <user>@<jump ip>
 
 2. Build proxychains to allow for host enumeration
 lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
+lin-ops$ ssh -S /tmp/jump jump -O cancel -D9050
 
 3. Perform ping sweep to discover target hosts
 jump$ for i in {1..254} ;do (ping -c 1 <target range>.$1 | grep "bytes from" &) 2>/dev/null ;done
