@@ -288,9 +288,41 @@ Question 2:
 Question 3:
 	File Transfer Protocol (FTP) appears to be available within Donovian Cyberspace. Perform 
 	further reconnaissance and interrogate this service to identify the flag.
+		for i in {1..254} ;do (ping -c 1 192.168.28.$i | grep "bytes from" &) 2>/dev/null ;done
+		proxychains nmap -T5 -Pn -sV -n <target host>
+		proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
+			192.168.28.100 > 2222(SSH)
+			80
+			/admin/
+			/admin/login.php
+			/img/
+			192.168.28.105 > 23, 2222(SSH)
+			192.168.28.111 > 2222(SSH)
+			80
+			/css/
+			/images/
+			/sites/
+			8080(http)
+			/css/
+			/images/
+			/js/
+			192.168.28.120 > 4242(SSH)
+		for i in {1..254} ;do (ping -c 1 192.168.150.$i | grep "bytes from" &) 2>/dev/null ;done
+			192.168.150.245 > 135, 139, 445, 3389, 9999
+			192.168.150.253 > 80, 514(shell)
+		ssh -S /tmp/jump jump -O forward -D9050 -L62000:192.168.28.100:80 -L62001:192.168.28.100:2222 -L62002:192.168.28.105:2222 -L62003:192.168.28.111:80 -L62004:192.168.28.111:2222 -L 62005:192.168.28.111:8080 -L62006:192.168.28.120:4242 -L62007:192.168.150.245:3389 -L62008:192.168.150.253:80
+		proxychains nmap -sT -T5 --script=ftp-anon.nse 192.168.28.105 2>/dev/null
 
+Question 4:
+	Find the Titles of all the hosted web servers, and identify the flag.
+		firefox &
+		127.0.0.1:<created port>
+		right click view page source
 
-
+Question 5:
+	Intelligence shows that the Donovian Government is preparing for a conference,
+	you have been tasked to collect all information relating to the speakers.  
+  	``Identify the key individual to find the flag``
 
 
 
