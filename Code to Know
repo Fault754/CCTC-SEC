@@ -12,7 +12,7 @@ FROM movies
 
 
 Jump Box : 10.50.18.197
-User: student_pass
+User: student
 Pass: X5AgTGeN0ZjK
 
 
@@ -20,6 +20,7 @@ RECON NOTES:
 
 1. Create the initial multiplex socket
 lin-ops$ ssh -MS /tmp/jump <user>@<jump ip>
+lin-ops$ ssh -S /tmp/jump <user>@<jump ip>
 
 2. Build proxychains to allow for host enumeration
 lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
@@ -30,13 +31,13 @@ lin-ops$ ssh -S /tmp/jump jump -O cancel -D9050
 lin-ops$ ssh -S /tmp/t1 t1 -O forward -D9050
 
 3. Perform ping sweep to discover target hosts
-jump$ for i in {1..254} ;do (ping -c 1 <target range>.$1 | grep "bytes from" &) 2>/dev/null ;done
+jump$ for i in {1..254} ;do (ping -c 1 <target range>.$i | grep "bytes from" &) 2>/dev/null ;done
 
 4. Perform host enumeration against discovered target hosts
 lin-ops$ proxychains nmap -T5 -Pn -sV -n <target host>
 lin-ops$ proxychains nmap -T5 -Pn -n <target host> -p
 .42 > 22,80
-.61 > 22,80,2289
+.61 > 22,80,3389
 .200 > 22
 proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
 
@@ -65,13 +66,6 @@ lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
 -O cancel -D9050 (cancel jump proxychains)
 
 8. Repeat and Go DEEPER!!!
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-Scheme of Maneuver:
->Jump Box
-->Network scan: 192.168.28.96/27
--->Network scan:192.168.150.224/27
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 WEB NOTES:
 
@@ -236,17 +230,64 @@ ssh -S /tmp/jump jump -O forward -D9050 -L41100:192.168.28.100:80 -L41101:192.16
 lpid - is a table in the column
 permissions - is the column
 sqlinjection - is the schema
-
-
 members - is the column
 
+Scheme of Maneuver:
+>Jump Box
+->Network scan: 192.168.28.96/27
+-->Network scan:192.168.150.224/27
 
+OSs: unknown
+Creds: student ::
+Known Ports: unknown
+Known URL: consulting.site.donovia
+Known URL: conference.site.donovia
+Action: Reconnaissance to collect intelligence and identify possible avenues of approach in the network.
 
+Verifying Stealth
 
+Without Multiplexing:
+Connect: ssh root@target
+Target Log: tail /var/log/auth.log -> Shows "Accepted password for root..."
+Connect again: ssh root@target
+Target Log: Shows another "Accepted password..." entry.
 
+With Multiplexing:
+Start Master: ssh -M -S /tmp/s root@target
+Target Log: Shows one entry.
+Connect Slave: ssh -S /tmp/s root@target
+Target Log: tail /var/log/auth.log -> No new entry.
+Check Connections: ss -ntp on target shows only one established TCP connection despite multiple active shells.
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Question 1:
+	1. Create a Master Socket
+	2. Establish at least 2 simultaneous active shell sessions (PTYs).
+	3. BUT, you must maintain only ONE established TCP connection to the server on its SSH service.
+	4. Submit the flag that is in student's home folder.
+		lin-ops$ ssh -MS /tmp/jump student@10.50.18.197
+		pass: X5AgTGeN0ZjK
+		lin-ops$ ssh -S /tmp/jump student@10.50.18.197
+		pass: N/A
 
+Question 2:
+	You have shell access to the `jumpbox` as user `student`.
 
+	An automated script recently ran and left an active SSH connection open to the restricted 
+	`target-host`. The credentials have been wiped, but the **Control Socket** might still be 
+	active.
+
+	Find the socket. Use it to jump to the `target-host` and retrieve the flag from flag from 
+	Socket owners home folder.
+		lin-ops$ ssh -MS /tmp/jump student@10.50.18.197
+		pass: X5AgTGeN0ZjK
+		ps -elf
+		cd /var/tmp/tmp_sockets
+		ssh -S backup_link admin2@127.0.0.1
+
+Question 3:
+	File Transfer Protocol (FTP) appears to be available within Donovian Cyberspace. Perform 
+	further reconnaissance and interrogate this service to identify the flag.
 
 
 
