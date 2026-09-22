@@ -1,5 +1,3 @@
-
-
 SELECT DISTINCT building_name
 FROM buildings 
   LEFT JOIN employees
@@ -57,7 +55,7 @@ lin-ops (ssh connection)>     ssh <user>@localhost -p <local port>
 lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
 -O cancel -D9050 (cancel jump proxychains)
 
-8. Tepeat and Go DEEPER!!!
+8. Repeat and Go DEEPER!!!
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 WEB NOTES:
 
