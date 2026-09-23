@@ -236,18 +236,6 @@ permissions - is the column
 sqlinjection - is the schema
 members - is the column
 
-Scheme of Maneuver:
->Jump Box
-->Network scan: 192.168.28.96/27
--->Network scan:192.168.150.224/27
-
-OSs: unknown
-Creds: student ::
-Known Ports: unknown
-Known URL: consulting.site.donovia
-Known URL: conference.site.donovia
-Action: Reconnaissance to collect intelligence and identify possible avenues of approach in the network.
-
 Verifying Stealth
 
 Without Multiplexing:
@@ -264,6 +252,18 @@ Target Log: tail /var/log/auth.log -> No new entry.
 Check Connections: ss -ntp on target shows only one established TCP connection despite multiple active shells.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->Network scan: 192.168.28.96/27
+-->Network scan:192.168.150.224/27
+
+OSs: unknown
+Creds: student ::
+Known Ports: unknown
+Known URL: consulting.site.donovia
+Known URL: conference.site.donovia
+Action: Reconnaissance to collect intelligence and identify possible avenues of approach in the network.
+
 NET SCANNING & RECON
 Question 1:
 	1. Create a Master Socket
@@ -346,6 +346,22 @@ Question 10:
 		proxychains nmap -sT -T5 --script=smb-os-discovery <target host> 2>/dev/null
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->T1:10.100.28.40
+
+Target Section:
+
+T1
+Hostname: Donovian_MI_websvr
+IP: 10.100.28.40
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Conduct approved Web Exploitation techniques to collect intellegence.
+
 WEB EXPLOIT
 Question 1:
 	Through website reconnaissance, what is Romanoff's email address?
@@ -362,6 +378,12 @@ Question 4:
 
 Question 5:
 	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
+			10.100.28.40 > 4444(SSH)
+			80
+			/robots.txt
+			/css/
+			/images/
+			/uploads/
 
 Question 6:
 	Gain initial access to the web server located at 10.100.28.40.
