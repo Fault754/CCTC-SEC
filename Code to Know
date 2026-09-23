@@ -321,7 +321,8 @@ Question 3:
 Question 4:
 	Find the Titles of all the hosted web servers, and identify the flag.
 		firefox &
-		127.0.0.1:<created port>
+		127.0.0.1:62005
+		Workshop webpage
 		right click view page source
 
 Question 5:
