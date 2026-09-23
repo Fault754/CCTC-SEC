@@ -329,19 +329,35 @@ Question 5:
 	Intelligence shows that the Donovian Government is preparing for a conference,
 	you have been tasked to collect all information relating to the speakers.  
   	``Identify the key individual to find the flag``
+		same page source as question 4, scroll down to the speakers section
 
 Question 6:
 	There is some **STRONG** text within the Donovian Conference News that needs to be collected. It will provide the flag to our operations.
+		on the same page source, there is a link to news.html
+		open to new tab and scroll down to see the flag surrounded by <strong></strong>
 
 Question 7:
 	Intelligence suggests that the Donovian Consulting Group appears to have sensitive contacts available on their public facing site. Scrape the data and piece together the flag.
+		127.0.0.1:62003
+		Donovia National Consulting webpage
+		Contact is misleading, select Articles and then Contacts
+		view page source after confirming some emails are part flags
+		notice that part of a flag is surrounded by <strong></strong>
+		ctrl+f page source for <strong>, see 5 parts of flag
 
 Question 8:
 	A company has posted an article to Donovian Consulting Groups blog, Identify the flag associated with the company.
+		viewing articles tab
+		view page source
+		some tags are preceeded with class=
+		one of them makes a sentence pointing to the flag
 
 Question 9:
 	A company has listed their Products to Donovian Consulting Groups site, Identify the flag associated with the products they provide.
-
+		view the products page
+		view page source
+		these flags do not match the proper formate for a-f0-9 and 64 characters
+		regex the sum-a-bish
 Question 10:
 	Your team has received intelligence related to Server Message Block being availble in another network if inital access to one of the devices in the x.x.28.x/27 network can be established. Identify the Computer name and group name of the target.
 		proxychains nmap -sT -T5 --script=smb-os-discovery <target host> 2>/dev/null
@@ -379,12 +395,13 @@ Question 4:
 
 Question 5:
 	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
-			10.100.28.40 > 4444(SSH)
-			80
-			/robots.txt
-			/css/
-			/images/
-			/uploads/
+		10.100.28.40 > 4444(SSH)
+		80
+		/robots.txt
+		/css/
+		/images/
+		/uploads/
+		
 
 Question 6:
 	Gain initial access to the web server located at 10.100.28.40.
