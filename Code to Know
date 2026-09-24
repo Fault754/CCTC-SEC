@@ -406,17 +406,26 @@ Question 1:
 		/css/
 		/images/
 		/uploads/
+		searching 127.0.0.1:62009/robots.txt shows /net_test
+		going to /net_test gives us 3 text boxes and a link to troubleticket
+		in "Path to test:" ; ls -lisa
+		check /Contract_bids.html
+		email is in the text
 		
 Question 2:
 	What is the IPv4 address of the Training Site website?
-		
+		from the ; ls -lisa there is an uploads directory
+		in uploads, read the message file
+
 Question 3:
 	Identify the user that the MI website is running as and relevant information about their user account configuration.
-		
+		from the ; ls -lisa, run ; cat /etc/passwd
+		flag is with billybob
+
 Question 4:
 	Natasha Romanoff has been identified as a major contracting officer for the Ministry. Intelligence suggests that she may have a file on system which will identify which companies are contracted to work on sensitive projects.
 	Investigate Ministry website and identify vulnerabilities which could allow collection of this file through usage of command injection, directory traversal, or unrestricted file upload.
-		
+		from the ; ls -lisa, run ; ls -lisa 
 Question 5:
 	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
 		
