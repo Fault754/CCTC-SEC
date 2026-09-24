@@ -1,16 +1,52 @@
+SQLBolt.com
+
+SELECT DISTINCT building_name, role 
+FROM buildings 
+  LEFT JOIN employees
+    ON building_name = building;
+
+SELECT role, name, building FROM employees
+where building is null;
+
 SELECT DISTINCT building_name
 FROM buildings 
   LEFT JOIN employees
     ON building_name = building
 WHERE role IS NULL;
 
-
 SELECT title, (domestic_sales + international_sales) / 1000000 AS gross_sales_millions
 FROM movies
   JOIN boxoffice
     ON movies.id = boxoffice.movie_id;
 
+SELECT title, rating * 10 AS rating_percent
+FROM movies
+  JOIN boxoffice
+    ON movies.id = boxoffice.movie_id;
 
+*EVEN*
+SELECT * FROM movies
+where year % 2 = 0;
+
+*ODD*
+SELECT * FROM movies
+where year % 2 <> 0;
+
+SELECT role, COUNT(*) as Number_of_artists
+FROM employees
+WHERE role = "Artist";
+
+SELECT role, COUNT(*) as Number_of_employees
+FROM employees
+GROUP BY role;
+
+SELECT role, SUM(years_employed)
+FROM employees
+GROUP BY role
+HAVING role = "Engineer";
+
+INSERT INTO movies VALUES (4, "Toy Story 4", "El Directore", 2015, 90);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Jump Box : 10.50.18.197
 User: student
 Pass: X5AgTGeN0ZjK
@@ -212,25 +248,6 @@ Step 1: Identify vulnerable field
 
         .php?Selection=<option> UNION SELECT @@version,pass,name FROM session.user #
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-ssh -S /tmp/jump jump -O forward -D9050 -L41100:192.168.28.100:80 -L41101:192.168.28.100:2222 -L41102:192.168.28.105:2222 -L41103:192.168.28.111:80 -L41104:192.168.28.111:2222
--L 41105:192.168.28.111:8080 -L41106:192.168.28.120:4242 -L41107:192.168.150.245:3389 -L41108:192.168.150.253:80
-
-28.100
-/admin/
-/admin/login.php
-/img/
-
-28.111
-80
-/css/
-/images/
-/sites/
-8080
-/css/
-/images/
-/js/
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 lpid - is a table in the column
 permissions - is the column
 sqlinjection - is the schema
@@ -250,7 +267,6 @@ Target Log: Shows one entry.
 Connect Slave: ssh -S /tmp/s root@target
 Target Log: tail /var/log/auth.log -> No new entry.
 Check Connections: ss -ntp on target shows only one established TCP connection despite multiple active shells.
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scheme of Maneuver:
 >Jump Box
@@ -358,10 +374,10 @@ Question 9:
 		view page source
 		these flags do not match the proper formate for a-f0-9 and 64 characters
 		regex the sum-a-bish
+
 Question 10:
 	Your team has received intelligence related to Server Message Block being availble in another network if inital access to one of the devices in the x.x.28.x/27 network can be established. Identify the Computer name and group name of the target.
 		proxychains nmap -sT -T5 --script=smb-os-discovery <target host> 2>/dev/null
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scheme of Maneuver:
 >Jump Box
@@ -382,19 +398,8 @@ Action: Conduct approved Web Exploitation techniques to collect intellegence.
 WEB EXPLOIT
 Question 1:
 	Through website reconnaissance, what is Romanoff's email address?
-
-Question 2:
-	What is the IPv4 address of the Training Site website?
-
-Question 3:
-	Identify the user that the MI website is running as and relevant information about their user account configuration.
-
-Question 4:
-	Natasha Romanoff has been identified as a major contracting officer for the Ministry. Intelligence suggests that she may have a file on system which will identify which companies are contracted to work on sensitive projects.
-	Investigate Ministry website and identify vulnerabilities which could allow collection of this file through usage of command injection, directory traversal, or unrestricted file upload.
-
-Question 5:
-	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
+		proxychains nmap -T5 -Pn -sV -n <target host>
+		proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
 		10.100.28.40 > 4444(SSH)
 		80
 		/robots.txt
@@ -402,16 +407,88 @@ Question 5:
 		/images/
 		/uploads/
 		
-
+Question 2:
+	What is the IPv4 address of the Training Site website?
+		
+Question 3:
+	Identify the user that the MI website is running as and relevant information about their user account configuration.
+		
+Question 4:
+	Natasha Romanoff has been identified as a major contracting officer for the Ministry. Intelligence suggests that she may have a file on system which will identify which companies are contracted to work on sensitive projects.
+	Investigate Ministry website and identify vulnerabilities which could allow collection of this file through usage of command injection, directory traversal, or unrestricted file upload.
+		
+Question 5:
+	Intel has found that by policy the Admin must check the Trouble Ticketing system every few minutes. Team lead orders are to "obtain" the Admins cookie.
+		
 Question 6:
 	Gain initial access to the web server located at 10.100.28.40.
 	What is the greeting when logging into the system?
-
+		
 Question 7:
 	Training Website: We have an asset that is trying to gain employment into the Ministry, however intelligence does not know the IP address of training web site. Our asset has stated that the training site may only be communicated with from the Ministry web site. We have reason to believe that the MI website might have a message saved inside the web server directory. Once we have located the address analyze that website and determine how to produce a certificate of completion, utilizing the Cyber Training Portal.
-
+		
 Question 8:
 	Training Website:
 	Having the ability to now communicate with the training web site, identify any vulnerabilities that could be used to collect intelligence. Once identified, utilize that vulnerability to obtain the flag from where user configuration information is stored on the system.
+		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->T1:10.100.28.48Target Section:
 
+T1
+Hostname: donovian-nla
+IP: 10.100.28.48
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+Last Known HTTP Port: 80
+PSP: Unknown
+Malware: Unknown
+Action: Conduct approved SQLi Exploitation techniques to collect intelligence.
 
+Question 1:
+	On the DNLA site identify the vulnerability. Find flag using the Categories page. To answer input the characters inside the flag.
+		
+Question 2:
+	How many columns are needed to make a "UNION SELECT" statement on the categories page?
+		
+Question 3:
+	How many *user created* tables are able to be identified through Injection of the web database on the Categories page?
+		
+Question 4:
+	Utilizing the Categories page on DNLA, what is the LPID ( Logistical Privilege ID ) matches with the banned permission accounts?
+		
+Question 5:
+	Provide the password for users with administrator access to the DNLA database.
+		
+Question 6:
+	Utilizing the Categories page on DNLA, find the information about the permissions of the Admin account.
+		
+Question 7:
+	Utilizing the Search page on DNLA, identify the vulnerability to find the flag.
+		
+Question 8:
+	How many columns are needed to make a "UNION SELECT" statement on the products search page?
+		
+Question 9:
+	How many *user created* tables are able to be identified through Injection of the web database on the Product Search page?
+		
+Question 10:
+	Identify the version of the database that DNLA is utilizing. To answer input the full version.
+		
+Question 11:
+	Utilizing the Products Search page on DNLA, find the order that happened on the Army's Birthday.
+		
+Question 12:
+	Find the flag associated with id 1337.
+		
+Question 13:
+	Utilizing the input field on DNLA Search page, use SQL injection to find the confirmation number associated with credit card purchase that was placed on the day of the Donovian Conference. 
+		
+Question 14:
+	Using the Register page on DNLA website, create a new user with admin permissions, ensuring the first name is set to ``Hacker``. Once created log in to get the flag.
+		
+Quesiton 15:
+	Extract the compressed file stored in the database.
+		
