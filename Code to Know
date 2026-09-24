@@ -394,18 +394,18 @@ Last Known SSH Port: unknown
 PSP: Unknown
 Malware: Unknown
 Action: Conduct approved Web Exploitation techniques to collect intellegence.
+	proxychains nmap -T5 -Pn -sV -n <target host>
+	proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
+	10.100.28.40 > 4444(SSH)
+	80
+	/robots.txt
+	/css/
+	/images/
+	/uploads/
 
 WEB EXPLOIT
 Question 1:
 	Through website reconnaissance, what is Romanoff's email address?
-		proxychains nmap -T5 -Pn -sV -n <target host>
-		proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
-		10.100.28.40 > 4444(SSH)
-		80
-		/robots.txt
-		/css/
-		/images/
-		/uploads/
 		searching 127.0.0.1:62009/robots.txt shows /net_test
 		going to /net_test gives us 3 text boxes and a link to troubleticket
 		in "Path to test:" ; ls -lisa
@@ -455,6 +455,15 @@ Last Known HTTP Port: 80
 PSP: Unknown
 Malware: Unknown
 Action: Conduct approved SQLi Exploitation techniques to collect intelligence.
+	proxychains nmap -T5 -Pn -sV -n <target host>
+	proxychains nmap -sT -T5 --script=http-enum <target host> 2>/dev/null
+	10.100.28.48 > 4444(SSH)
+	80
+	/css/
+	/images/
+	/includes/
+	/js/
+	/scripts/
 
 Question 1:
 	On the DNLA site identify the vulnerability. Find flag using the Categories page. To answer input the characters inside the flag.
@@ -488,7 +497,15 @@ Question 10:
 		
 Question 11:
 	Utilizing the Products Search page on DNLA, find the order that happened on the Army's Birthday.
+		sqlinjection.orders
+		date		id
+		1775-06-14	40
+		date		member
+		1775-06-14	4
+		sqlinjection.payments
+		date		id
 		
+
 Question 12:
 	Find the flag associated with id 1337.
 		
