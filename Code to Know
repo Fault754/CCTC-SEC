@@ -518,3 +518,75 @@ Question 14:
 Quesiton 15:
 	Extract the compressed file stored in the database.
 		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+All files can be extracted from the known target "Donovian-Webserver". Only authorized to conduct task on Analyst Workstations.
+
+T1
+Hostname: web.site.donovia
+IP: 192.168.28.111
+OS: unknown
+Creds: comrade::StudentWebExploitPassword
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Extract approved binaries under directory titled "longTermStorage".
+	proxychains nmap -T5 -Pn -sV -n 192.168.28.111
+	proxychains nmap -sT -T5 --script=http-enum 192.168.28.111 2>/dev/null
+		2222(SSH)
+		80
+		/css/
+		/images/
+		/sites/
+		8080
+		/css/
+		/images/
+		/js/
+
+Question 1:
+	C\Users\student> ssh student@10.50.18.197 from windows 
+	@jump:~$ ssh -p 2222 comrade@192.168.28.111
+	@comrade:~$ find . -type d | grep longTermStorage
+	@comrade:~$ exit
+	@jump:~$ scp -P 2222 -r comrade@192.168.28.111:/var/www/html/consulting/public_html/longTermStorage/ .
+	C\Users\student> pscp -r student@10.50.18.197:/home/student/longTermStorage C:\Users\student
+	Ghidra That Shiiii
+
+Question 2:
+	
+
+Question 3:
+	
+
+Question 4:
+	
+
+Question 5:
+	
+
+Question 6:
+	
+
+Question 7:
+	
+
+Question 8:
+	
+
+Question 9:
+	
+
+Question 10:
+	
+
+Question 11:
+	
+
+Question 12:
+	
+
+Question 13:
+	
+
+
+
+
