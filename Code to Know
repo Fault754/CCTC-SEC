@@ -514,7 +514,9 @@ Question 13:
 		
 Question 14:
 	Using the Register page on DNLA website, create a new user with admin permissions, ensuring the first name is set to ``Hacker``. Once created log in to get the flag.
-		
+		in username field = asdf','asdf','asdf',1)#
+		to corospond username,password,email,permission)
+
 Quesiton 15:
 	Extract the compressed file stored in the database.
 		
