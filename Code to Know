@@ -811,7 +811,9 @@ Question 10:
 	learn to hardcode a master key in bytes and a jmp instruction to a success path 
 
 Question 11:
-	
+	looking at the function, at one point upon opening the .exe, it creates a regkey and a secret3 file.
+after typing your answer, it compares your data in the regkey and the file, if its the same its a success.
+run the .exe and then edit the data in the file and regkey, then type your answer.
 
 Question 12:
 	
@@ -879,6 +881,15 @@ Question 6:
 	
 
 Question 7:
+	from strings
+		Please enter your message.
+		inventory2.c
+		completed.7698
+		message
+	gdb ./inventory2.exe
+		pdisass main
+		pdisass message
+		<recv@plt> is red
 	
 
 Question 8:
