@@ -458,6 +458,36 @@ back on windows run program
 on lin-ops run ./winbuff.py
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Lin Priv Esc Notes:
+
+1. Start with sudo -l
+		target$ sudo -l
+			Plug output into gtfobins
+			Look at SUDO tab
+			**DONT FORGET THE SUDO**
+		target$ sudo cat <file path>
+		target$ 
+
+2. Search the system for files with SUID or SGID permissions:
+		UID:
+		target$ find / -type f -perm /2000 -ls 2>/dev/null
+		GID:
+		target$ find / -type f -perm /4000 -ls 2>/dev/null
+		Both:
+		target$ find / -type f -perm /6000 -ls 2>/dev/null
+			Plug output into gtfobins
+			Look at SUID tab
+			**always change /bin/sh to /bin/bash**
+
+3. 
+		export PATH=.:$PATH
+		target$ echo '#!/bin/bash' > ls
+		target$ echo 'echo "!! TROJAN EXECUTED !!"' >> ls
+		target$ echo 'echo "This command was run by: $(whoami)"' >> ls
+		chmod =x ls
+		ls
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @lin-ops:~$ ssh -MS /tmp/jump jump -O forward -D9050 -L <open port>:<target IP>:<target port>
 @lin-ops:~$ xfreerdp /v:127.0.0.1:<port forward> /u:<username> /p:<password> +clipboard /dynamic-resolution
 Open Putty.exe
@@ -475,7 +505,6 @@ URL linops ip:port used
 download created .dll
 find our file and run again
 file should be created with our output
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 lpid - is a table in the column
@@ -1121,8 +1150,42 @@ Action: Test supplied credentials, if possible gain access to host. Conduct host
 3389/tcp open  ms-wbt-server
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Scheme of Maneuver:
+>Jump Box
+->Pivot:192.168.28.105
+--->T1: 192.168.28.27
+--->T2: 192.168.28.12Target Section:
 
+Pivot
+Hostname: Donovian-Terminal
+IP: 192.168.28.105
+OS: Ubuntu 18.04
+Creds: comrade :: StudentReconPassword
+Last Known SSH Port: 2222
+PSP: rkhunter
+Malware: none
+Action: Perform SSH masquerade and redirect to the next target. No survey required, cohabitation with known PSP approved.
 
+T1
+Hostname: unknown
+IP: 192.168.28.27
+OS: Linux ver: Unknown
+Creds: comrade :: StudentPrivPassword
+Last Known Ports: unknown
+PSP: unknown
+Malware: unknown
+Action: Test supplied credentials, if possible gain access to host. Conduct host survey and gain privileged access.
+
+T2
+Hostname: unknown
+IP: 192.168.28.12
+OS: Linux ver: Unknown
+Creds: comrade :: StudentPrivPassword
+Last Known Ports: unknown
+PSP: unknown
+Malware: unknown
+Action: Test supplied credentials, if possible gain access to host. Conduct host survey and gain privileged access.
 
 
 
