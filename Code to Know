@@ -271,6 +271,7 @@ print (offset)
 python linbuff.py | ./func (should crash it: Segmentation fault (core dumped))
 gdb ./func
 do run <<<$(python linbuff.py) (look what is overwritten) should see 0x41414141 in ?? ()
+	(instead of <<<$ do ./exploit_me "'python<script>'")
 quit and use wiremask.eu
 take the pattern and replace the "A" * 100 with your pattern
 ```
